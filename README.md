@@ -37,3 +37,19 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 - `manifest.webmanifest`, `icones/` : ce qui rend l'application installable
 - `service-worker.js` : le fonctionnement hors connexion (à chaque mise à jour, changer `VERSION` dans ce fichier)
 - `outils/construire-demo.mjs` : fabrique une version de démonstration en un seul fichier
+
+## Adresse de l'application
+
+https://anaisschef02-wq.github.io/Application-acqu-reur/
+
+L'adresse ne contient que le code de l'application : les fiches restent sur chaque appareil.
+
+## Installer sur le téléphone
+
+- **iPhone** : ouvrir l'adresse dans **Safari** → bouton **Partager** → **Sur l'écran d'accueil** → **Ajouter**.
+- **Android** : ouvrir l'adresse dans **Chrome** → menu **⋮** → **Installer l'application**.
+- **Ordinateur** : ouvrir l'adresse dans **Edge** ou **Chrome** → icône d'installation dans la barre d'adresse (ou menu → **Installer**).
+
+Attention : l'application installée et la page ouverte dans le navigateur ne partagent pas leurs fiches. Installez d'abord, puis saisissez vos acquéreurs dans l'application installée.
+
+Pour passer les fiches du téléphone à l'ordinateur : Réglages → **Sauvegarder mes données** (ou **Envoyer la sauvegarde…**) sur le téléphone, puis Réglages → **Restaurer / importer une sauvegarde** sur l'ordinateur.
