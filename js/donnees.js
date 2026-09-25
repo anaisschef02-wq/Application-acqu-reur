@@ -48,6 +48,12 @@ const DEMARCHES = [
   { id: 'comptant', label: 'Achat comptant' },
 ];
 
+const STATUTS_BIEN = [
+  { id: 'disponible', label: 'Disponible' },
+  { id: 'offre', label: 'Sous offre' },
+  { id: 'vendu', label: 'Vendu' },
+];
+
 const TYPES_ECHANGE = [
   { id: 'appel', label: 'Appel' },
   { id: 'sms', label: 'SMS' },
@@ -194,6 +200,18 @@ function acquereursExemples() {
       ],
       financement: { demarche: 'accord', banque: 'Caisse d\'Épargne', accordMontant: 400000, accordDate: '2026-05-15', apport: 80000, bienAVendre: 'non', venteEtat: '' },
     }),
+  ];
+}
+
+// Biens fictifs pour la démonstration.
+function biensExemples() {
+  const ilYa = (jours) => new Date(Date.now() - jours * 86400000).toISOString();
+  const base = (o) => ({ id: nouvelId(), demo: true, lien: '', photo: '', notes: '', modifieLe: o.creeLe, ...o });
+  return [
+    base({ creeLe: ilYa(1), reference: 'EX-2041', type: 'maison', commune: 'Illtal', prix: 245000, surface: 125, chambres: 4, terrain: 650, options: ['garage', 'jardin'], statut: 'disponible', lien: 'https://www.example.com/annonce-ex-2041' }),
+    base({ creeLe: ilYa(4), reference: 'EX-2055', type: 'appartement', commune: 'Waldighofen', prix: 149000, surface: 72, chambres: 2, terrain: null, options: ['balcon', 'garage'], statut: 'disponible' }),
+    base({ creeLe: ilYa(8), reference: 'EX-2060', type: 'maison', commune: 'Roppentzwiller', prix: 209000, surface: 95, chambres: 2, terrain: 400, options: ['plainpied', 'garage', 'jardin'], statut: 'disponible' }),
+    base({ creeLe: ilYa(30), reference: 'EX-1987', type: 'terrain', commune: 'Ruederbach', prix: 78000, surface: null, chambres: null, terrain: 700, options: [], statut: 'offre' }),
   ];
 }
 

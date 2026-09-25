@@ -3,8 +3,8 @@
 // en mémoire le temps de la session et l'application le signale.
 const DB = (() => {
   const NOM = 'suivi-acquereurs';
-  const VERSION = 1;
-  const MAGASINS = { acquereurs: 'id', reglages: 'cle' };
+  const VERSION = 2;
+  const MAGASINS = { acquereurs: 'id', biens: 'id', reglages: 'cle' };
   let ouverture = null;
   let memoire = null;
 
@@ -24,12 +24,18 @@ const DB = (() => {
             if (!db.objectStoreNames.contains(nom)) db.createObjectStore(nom, { keyPath: cle });
           }
         };
-        req.onsuccess = () => resoudre(req.result);
+        req.onsuccess = () => {
+          const db = req.result;
+          // Une nouvelle version de l'application ouverte dans un autre onglet peut mettre la base à jour.
+          db.onversionchange = () => db.close();
+          resoudre(db);
+        };
         req.onerror = () => rejeter(req.error);
-        req.onblocked = () => rejeter(new Error('Base bloquée'));
+        // Mise à jour en attente : un autre onglet garde l'ancienne version ouverte.
+        req.onblocked = () => console.warn('Mise à jour de la base en attente : fermez les autres onglets de l\'application.');
       }).catch((e) => {
         console.warn('IndexedDB indisponible, stockage en mémoire', e);
-        memoire = { acquereurs: new Map(), reglages: new Map() };
+        memoire = Object.fromEntries(Object.keys(MAGASINS).map((m) => [m, new Map()]));
         return null;
       });
     }

@@ -5,11 +5,13 @@ const App = (() => {
   let route = { ecran: 'journee' };
   let retourHash = '#/';
   let dernierHash = null;
-  const ECRANS_RACINE = ['journee', 'acquereurs'];
+  const ECRANS_RACINE = ['journee', 'acquereurs', 'biens'];
 
   function lireRoute() {
     const morceaux = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     if (morceaux[0] === 'acquereurs') return { ecran: 'acquereurs' };
+    if (morceaux[0] === 'biens') return { ecran: morceaux[1] === 'nouveau' ? 'bien-nouveau' : 'biens' };
+    if (morceaux[0] === 'b' && morceaux[1]) return { ecran: morceaux[2] === 'modifier' ? 'bien-modifier' : 'bien', idBien: morceaux[1] };
     if (morceaux[0] === 'nouveau') return { ecran: 'nouveau' };
     if (morceaux[0] === 'reglages') return { ecran: 'reglages' };
     if (morceaux[0] === 'a' && morceaux[1]) return { ecran: morceaux[2] === 'modifier' ? 'modifier' : 'fiche', id: morceaux[1] };
@@ -32,9 +34,14 @@ const App = (() => {
       a = Acq.trouver(route.id);
       if (!a) route = { ecran: 'journee' };
     }
+    let b = null;
+    if (route.idBien) {
+      b = Biens.trouver(route.idBien);
+      if (!b) route = { ecran: 'biens' };
+    }
 
     const racine = ECRANS_RACINE.includes(route.ecran);
-    if (racine) retourHash = route.ecran === 'journee' ? '#/' : '#/acquereurs';
+    if (racine) retourHash = { journee: '#/', acquereurs: '#/acquereurs', biens: '#/biens' }[route.ecran];
     document.body.className = `${route.ecran === 'acquereurs' ? 'vue-liste' : 'vue-detail'}${racine ? ' vue-racine' : ''}`;
 
     switch (route.ecran) {
@@ -48,6 +55,16 @@ const App = (() => {
         break;
       case 'reglages':
         detail.innerHTML = Reglages.vue();
+        break;
+      case 'biens':
+        detail.innerHTML = Biens.vueListe();
+        break;
+      case 'bien':
+        detail.innerHTML = Biens.fiche(b);
+        break;
+      case 'bien-nouveau':
+      case 'bien-modifier':
+        detail.innerHTML = Biens.formulaire(b);
         break;
       default:
         detail.innerHTML = Relances.vueJournee();
@@ -128,12 +145,47 @@ const App = (() => {
         break;
       case 'charger-exemples':
         await Acq.chargerExemples();
+        await Biens.chargerExemples();
         rendre();
         break;
+      case 'filtre-biens':
+        Biens.filtrer(el.dataset.filtreBien);
+        rendre();
+        break;
+      case 'proposer-bien':
+        Biens.proposer(el.dataset.id, el.dataset.bien);
+        break;
+      case 'marquer-propose':
+        await Biens.marquerPropose(el.dataset.id, el.dataset.bien);
+        UI.toast('Noté comme proposé');
+        rendre();
+        break;
+      case 'annuler-proposition':
+        await Biens.annulerProposition(el.dataset.id, el.dataset.bien);
+        rendre();
+        break;
+      case 'retirer-photo':
+        Biens.retirerPhoto();
+        break;
+      case 'effacer-criteres':
+        Object.assign(Acq.filtre, { type: '', commune: '', budgetMin: null, budgetMax: null });
+        ['critere-type', 'critere-commune', 'critere-budget-min', 'critere-budget-max'].forEach((i) => { document.getElementById(i).value = ''; });
+        Acq.rendreListe(route.id);
+        break;
+      case 'supprimer-bien': {
+        const bien = Biens.trouver(el.dataset.id);
+        const ok = await UI.modale({ titre: `Supprimer le bien ${Biens.titre(bien)} ?`, texte: 'Cette action est définitive.', ok: 'Supprimer', danger: true });
+        if (!ok) return;
+        await Biens.supprimer(bien.id);
+        UI.toast('Bien supprimé');
+        aller('#/biens');
+        break;
+      }
       case 'supprimer-exemples': {
         const ok = await UI.modale({ titre: 'Supprimer les exemples ?', texte: 'Seuls les acquéreurs marqués « Exemple » seront supprimés. Vos vraies fiches ne sont pas touchées.', ok: 'Supprimer', danger: true });
         if (!ok) return;
         await Acq.supprimerExemples();
+        await Biens.supprimerExemples();
         UI.toast('Exemples supprimés');
         rendre();
         break;
@@ -176,6 +228,12 @@ const App = (() => {
         Acq.filtre.texte = e.target.value;
         Acq.rendreListe(route.id);
       }
+      const criteres = { 'critere-type': 'type', 'critere-commune': 'commune', 'critere-budget-min': 'budgetMin', 'critere-budget-max': 'budgetMax' };
+      if (criteres[e.target.id]) {
+        const cle = criteres[e.target.id];
+        Acq.filtre[cle] = cle.startsWith('budget') ? UI.lireNombre(e.target.value) : e.target.value;
+        Acq.rendreListe(route.id);
+      }
       const form = e.target.closest('#form-acq');
       if (form) Acq.majConditions(form);
     });
@@ -194,6 +252,18 @@ const App = (() => {
         await Relances.changerFrequence(e.target.dataset.id, +e.target.value);
         rendre();
       }
+      if (e.target.id === 'statut-bien') {
+        const bien = Biens.trouver(e.target.dataset.id);
+        bien.statut = e.target.value;
+        await Biens.enregistrer(bien);
+        UI.toast(`Statut : ${libelle(STATUTS_BIEN, bien.statut)}`);
+        rendre();
+      }
+      if (e.target.id === 'reglage-marge') {
+        await Biens.changerMarge(+e.target.value);
+        UI.toast('Marge enregistrée');
+      }
+      if (e.target.id === 'bien-photo') Biens.choisirPhoto(e.target);
       if (e.target.id === 'statut-rapide') {
         const ok = await Acq.changerStatut(e.target.dataset.id, e.target.value);
         rendre();
@@ -213,6 +283,12 @@ const App = (() => {
     });
 
     document.addEventListener('submit', async (e) => {
+      if (e.target.id === 'form-bien') {
+        e.preventDefault();
+        const bien = await Biens.soumettre(e.target);
+        if (bien) aller(`#/b/${bien.id}`);
+        return;
+      }
       if (e.target.id !== 'form-acq') return;
       e.preventDefault();
       const a = await Acq.soumettre(e.target);
@@ -226,6 +302,7 @@ const App = (() => {
 
     await Acq.charger();
     await Messages.charger();
+    await Biens.charger();
 
     if (!(await DB.estPersistant())) {
       const b = document.getElementById('bandeau');
@@ -235,13 +312,15 @@ const App = (() => {
 
     // Version de démonstration : on la remplit d'exemples au premier lancement.
     // Quand les exemples évoluent (nouvelle étape), on remplace les anciens exemples.
-    const VERSION_DEMO = 3;
+    const VERSION_DEMO = 4;
     if (window.DEMO_AUTO) {
       const deja = await DB.lire('reglages', 'demoInit');
       const version = deja ? (deja.valeur === true ? 1 : deja.valeur) : 0;
       if (version < VERSION_DEMO && (!Acq.liste().length || Acq.liste().some((a) => a.demo))) {
         await Acq.supprimerExemples();
+        await Biens.supprimerExemples();
         await Acq.chargerExemples();
+        await Biens.chargerExemples();
       }
       await DB.ecrire('reglages', { cle: 'demoInit', valeur: VERSION_DEMO });
     }

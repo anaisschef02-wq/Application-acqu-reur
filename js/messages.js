@@ -294,7 +294,14 @@ Bien cordialement,
       const titre = modele(d.get('modele')).titre;
       const id = form.dataset.id;
       const canal = d.get('canal');
-      setTimeout(() => Echanges.ouvrir({ id, type: canal, focus: false, texte: `Message « ${titre} » envoyé.` }), 400);
+      const { bienId } = contexte.extra;
+      let texte = `Message « ${titre} » envoyé.`;
+      if (bienId) {
+        const bien = Biens.trouver(bienId);
+        texte = `Bien proposé : ${Biens.titre(bien)}${bien.reference ? ` (réf. ${bien.reference})` : ''}.`;
+        Biens.marquerPropose(id, bienId).then(() => App.rendre());
+      }
+      setTimeout(() => Echanges.ouvrir({ id, type: canal, focus: false, texte }), 400);
     }
   });
 

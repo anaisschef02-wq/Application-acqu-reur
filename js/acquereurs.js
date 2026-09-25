@@ -3,7 +3,7 @@ const Acq = (() => {
   const { esc } = UI;
   let tous = [];
   let communesAjoutees = [];
-  const filtre = { texte: '', statut: 'actifs' };
+  const filtre = { texte: '', statut: 'actifs', type: '', commune: '', budgetMin: null, budgetMax: null };
 
   // ---------- Données ----------
 
@@ -115,6 +115,20 @@ const Acq = (() => {
           <input id="recherche-nom" type="search" placeholder="Rechercher un nom, un téléphone…" value="${esc(filtre.texte)}" autocomplete="off" aria-label="Rechercher un acquéreur">
         </label>
         <div class="filtres" id="filtres" role="group" aria-label="Filtrer par statut"></div>
+        <details class="criteres" id="criteres">
+          <summary>Qui cherche… ? <span id="criteres-resume"></span></summary>
+          <div class="criteres-corps">
+            <div class="grille-2">
+              ${UI.champ('Type de bien', `<select id="critere-type" class="champ-select"><option value="">Tous les types</option>${TYPES_BIEN.map((t) => `<option value="${t.id}">${esc(t.label)}</option>`).join('')}</select>`)}
+              ${UI.champ('Commune', `<select id="critere-commune" class="champ-select"><option value="">Toutes les communes</option>${communes().map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('')}</select>`)}
+            </div>
+            <div class="grille-2">
+              ${UI.champ('Budget à partir de', `<span class="avec-unite"><input id="critere-budget-min" inputmode="numeric" autocomplete="off" data-nombre><em>€</em></span>`)}
+              ${UI.champ('Budget jusqu\'à', `<span class="avec-unite"><input id="critere-budget-max" inputmode="numeric" autocomplete="off" data-nombre><em>€</em></span>`)}
+            </div>
+            <button type="button" class="lien" data-action="effacer-criteres">Effacer les critères</button>
+          </div>
+        </details>
         <a class="btn btn-nouveau-bureau" href="#/nouveau">+ Nouvel acquéreur</a>
       </div>
       <div id="liste-items" class="liste-items"></div>`;
@@ -123,6 +137,15 @@ const Acq = (() => {
   function correspond(a) {
     if (filtre.statut === 'actifs' && STATUTS_CLOS.includes(a.statut)) return false;
     if (!['actifs', 'tous'].includes(filtre.statut) && a.statut !== filtre.statut) return false;
+    const r = a.recherche;
+    if (filtre.type && r.types.length && !r.types.includes(filtre.type)) return false;
+    if (filtre.commune && r.communes.length && !r.communes.includes(filtre.commune)) return false;
+    if (filtre.budgetMin || filtre.budgetMax) {
+      const budget = r.budgetMax || r.budgetMin;
+      if (!budget) return false;
+      if (filtre.budgetMin && budget < filtre.budgetMin) return false;
+      if (filtre.budgetMax && budget > filtre.budgetMax) return false;
+    }
     const q = UI.sansAccents(filtre.texte).trim();
     if (!q) return true;
     const botte = UI.sansAccents(a.personnes.map((p) => `${p.prenom} ${p.nom} ${p.nom} ${p.prenom} ${p.email}`).join(' '));
@@ -157,8 +180,16 @@ const Acq = (() => {
     }
 
     const visibles = tous.filter(correspond).sort((x, y) => (y.modifieLe || '').localeCompare(x.modifieLe || ''));
+    const criteres = [
+      filtre.type && libelle(TYPES_BIEN, filtre.type).toLowerCase(),
+      filtre.commune && `à ${filtre.commune}`,
+      filtre.budgetMin && `dès ${UI.kEuros(filtre.budgetMin)}`,
+      filtre.budgetMax && `jusqu'à ${UI.kEuros(filtre.budgetMax)}`,
+    ].filter(Boolean);
+    const resume = document.getElementById('criteres-resume');
+    if (resume) resume.textContent = criteres.length ? `${criteres.join(', ')} : ${visibles.length} résultat${visibles.length > 1 ? 's' : ''}` : '';
     if (!visibles.length) {
-      items.innerHTML = `<div class="vide"><p>Aucun acquéreur ne correspond à « ${esc(filtre.texte)} ».</p></div>`;
+      items.innerHTML = `<div class="vide"><p>Aucun acquéreur ne correspond${filtre.texte ? ` à « ${esc(filtre.texte)} »` : ' à ces critères'}.</p></div>`;
       return;
     }
     items.innerHTML = `<ul class="liste">${visibles.map((a) => `
@@ -231,6 +262,8 @@ const Acq = (() => {
         ${Relances.blocFiche(a)}
 
         ${Echanges.blocFiche(a)}
+
+        ${Biens.blocAcquereur(a)}
 
         <section class="bloc">
           <h3>Coordonnées</h3>

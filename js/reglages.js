@@ -3,7 +3,7 @@ const Reglages = (() => {
   const { esc } = UI;
 
   function vue() {
-    const nbExemples = Acq.liste().filter((a) => a.demo).length;
+    const nbExemples = Acq.liste().filter((a) => a.demo).length + Biens.liste().filter((b) => b.demo).length;
     const autres = Acq.communesSupplementaires();
     return `
       <article class="fiche">
@@ -25,9 +25,11 @@ const Reglages = (() => {
 
         ${Messages.vueReglages()}
 
+        ${Biens.vueReglages()}
+
         <section class="bloc">
           <h3>Acquéreurs fictifs</h3>
-          <p class="discret">Pour découvrir l'application sans toucher à vos vrais clients. Ils sont marqués « Exemple » dans la liste.</p>
+          <p class="discret">Des acquéreurs et des biens fictifs pour découvrir l'application sans toucher à vos vrais clients. Ils sont marqués « Exemple ».</p>
           <div class="vide-actions">
             <button type="button" class="btn btn-secondaire" data-action="charger-exemples">Ajouter des exemples</button>
             ${nbExemples ? `<button type="button" class="btn btn-danger" data-action="supprimer-exemples">Supprimer les ${nbExemples} exemples</button>` : ''}

@@ -92,6 +92,7 @@ const Echanges = (() => {
           <input id="echange-date" name="date" type="datetime-local" value="${esc(e.date)}">
         </label>
         <div class="visite-champs" data-si="type:visite">
+          ${Biens.optionsVisite(e.bienId)}
           ${UI.champ('Bien visité', `<input id="echange-bien" name="bien" autocomplete="off" placeholder="Ex. : maison 5 pièces, Illtal" value="${esc(e.bien)}">`)}
           ${UI.pastilles('avis', AVIS_VISITE, e.avis, { unique: true, legende: 'Avis de l\'acquéreur' })}
         </div>
@@ -133,6 +134,7 @@ const Echanges = (() => {
       date: d.get('date') || dateLocale(),
       texte: String(d.get('texte') || '').trim(),
       bien: type === 'visite' ? String(d.get('bien') || '').trim() : '',
+      bienId: type === 'visite' ? d.get('bienId') || '' : '',
       avis: type === 'visite' ? d.get('avis') || '' : '',
     };
     a.echanges = (a.echanges || []).filter((x) => x.id !== echange.id);
@@ -171,6 +173,9 @@ const Echanges = (() => {
     const form = e.target.closest('#form-echange');
     if (!form) return;
     Acq.majConditions(form);
+    if (e.target.id === 'echange-bien-id' && e.target.value) {
+      form.querySelector('#echange-bien').value = e.target.selectedOptions[0].dataset.libelle;
+    }
     if (e.target.name === 'type') {
       form.querySelector('label[for="echange-texte"]').textContent = e.target.value === 'visite' ? 'Compte rendu' : 'Notes';
     }

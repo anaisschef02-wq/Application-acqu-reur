@@ -411,7 +411,7 @@ body.feuille-ouverte { overflow: hidden; }
 /* ---------- Onglets (téléphone) ---------- */
 .onglets {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
-  display: none; grid-template-columns: 1fr 1fr;
+  display: none; grid-template-columns: repeat(3, 1fr);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--surface); border-top: 1px solid var(--bord);
 }
@@ -428,7 +428,17 @@ body.vue-racine .onglets { display: grid; }
 }
 body.vue-racine .fab { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 @media (min-width: 900px) {
-  .onglets { display: none !important; }
+  /* Sur ordinateur, les onglets passent dans la barre du haut. */
+  .barre-haut { gap: 24px; }
+  .onglets, body.vue-racine .onglets {
+    position: static; display: flex; gap: 4px; margin-right: auto; padding: 0;
+    background: none; border: 0;
+  }
+  .onglets a { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; font-size: .95rem; }
+  .onglets a:hover { background: var(--surface-2); }
+  .onglets a.actif { background: var(--accent-doux); }
+  .onglets svg { width: 20px; height: 20px; }
+  .compteur { position: static; }
   .journee .btn-note-rapide { display: none; }
 }
 
@@ -449,7 +459,7 @@ body.vue-racine .fab { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .groupe-relances[data-etat="retard"] .relance-quand { color: var(--danger); }
 .groupe-relances[data-etat="aujourdhui"] .relance-quand { color: var(--accent); }
 .relance-dernier { font-size: .85rem; color: var(--discret); }
-.tag-fixe { display: inline-block; padding: 0 7px; border-radius: 6px; background: var(--accent-doux); color: var(--accent-fort); font-size: .78rem; font-weight: 650; }
+.tag-fixe { justify-self: start; display: inline-block; padding: 0 7px; border-radius: 6px; background: var(--accent-doux); color: var(--accent-fort); font-size: .78rem; font-weight: 650; }
 
 .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .relance .contacts { padding: 0 12px 12px; }
@@ -497,6 +507,68 @@ button.btn-contact { font: inherit; font-weight: 650; font-size: .92rem; cursor:
 .modele { border-top: 1px solid var(--bord); padding-top: 4px; }
 .modele-corps { display: grid; gap: 12px; padding: 4px 0 12px; }
 .modele-corps .lien { justify-self: start; padding: 0; }
+
+/* ---------- Biens ---------- */
+.entete-biens { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.ligne-bien { grid-template-columns: 76px 1fr; gap: 14px; align-items: start; }
+.ligne-bien.compacte { grid-template-columns: 56px 1fr; padding: 10px 12px; }
+.ligne-bien-corps { display: grid; gap: 3px; min-width: 0; }
+.vignette { width: 76px; height: 76px; border-radius: 10px; object-fit: cover; background: var(--surface-2); }
+.compacte .vignette { width: 56px; height: 56px; }
+.vignette-vide { display: grid; place-items: center; color: var(--discret); }
+.ligne-prix { font-weight: 650; font-variant-numeric: tabular-nums; }
+.ligne-correspond { font-size: .88rem; font-weight: 600; color: var(--accent); }
+.statut-bien {
+  flex: none; padding: 2px 10px; border-radius: 999px; font-size: .78rem; font-weight: 650; white-space: nowrap;
+  background: var(--accent-doux); color: var(--accent-fort);
+}
+.statut-bien[data-statut="offre"] { background: var(--exemple-doux); color: var(--exemple); }
+.statut-bien[data-statut="vendu"] { background: var(--surface-2); color: var(--discret); }
+.photo-bien { width: 100%; max-height: 320px; object-fit: cover; border-radius: var(--rayon); }
+.prix-bien { margin: 0; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.score {
+  flex: none; padding: 2px 9px; border-radius: 999px; font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--surface-2); color: var(--texte);
+}
+.score[data-niveau="fort"] { background: var(--accent); color: var(--sur-accent); }
+.raisons { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .84rem; }
+.raisons span::before { margin-right: 4px; font-weight: 700; }
+.raison-oui { color: var(--avis-aime); }
+.raison-oui::before { content: "✓"; }
+.raison-moyen { color: var(--avis-mitige); }
+.raison-moyen::before { content: "≈"; }
+.raison-non { color: var(--avis-pasaime); }
+.raison-non::before { content: "✕"; }
+
+.bloc-correspondances { display: grid; gap: 12px; border-color: var(--accent); }
+.bloc-correspondances h3 { margin: 0; font-size: 1.05rem; text-transform: none; letter-spacing: 0; color: var(--texte); }
+.correspondances { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.correspondance { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--bord); border-radius: 10px; background: var(--fond); }
+.correspondance-infos { display: grid; gap: 5px; color: var(--texte); text-decoration: none; }
+.correspondance-infos:hover .ligne-nom { color: var(--accent); }
+.correspondance-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.correspondance-actions .btn { min-height: 44px; }
+.correspondance-actions .lien { font-size: .9rem; }
+.bloc-biens-acq { display: grid; gap: 10px; }
+.bloc-biens-acq h3 { margin: 0; }
+.bloc-biens-acq .sous-titre { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: .95rem; }
+.bloc-biens-acq .compte { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--accent); color: var(--sur-accent); font-size: .8rem; }
+.bloc-biens-acq .ligne { background: var(--fond); }
+
+.champ-titre { font-size: .92rem; font-weight: 600; }
+.photo-zone { display: grid; gap: 6px; justify-items: start; }
+.photo-zone img { max-width: 100%; max-height: 220px; border-radius: 10px; }
+.photo-zone .lien { padding: 0; }
+.btn-fichier { position: relative; justify-self: start; overflow: hidden; }
+.btn-fichier input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* ---------- Recherche par critères ---------- */
+.criteres { background: var(--surface); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 0 14px; }
+.criteres summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: 48px; cursor: pointer; font-weight: 600; }
+.criteres summary span { font-weight: 500; font-size: .88rem; color: var(--accent); }
+.criteres-corps { display: grid; gap: 12px; padding-bottom: 14px; }
+.criteres-corps .lien { justify-self: start; padding: 0; }
 
 /* ---------- Messages ---------- */
 .toast {
