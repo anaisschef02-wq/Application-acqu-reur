@@ -148,6 +148,10 @@ const App = (() => {
         await Biens.chargerExemples();
         rendre();
         break;
+      case 'installer':
+        await Reglages.installer();
+        rendre();
+        break;
       case 'sauvegarder':
         await Sauvegarde.telecharger();
         rendre();
@@ -352,6 +356,11 @@ const App = (() => {
     panneauListe().innerHTML = Acq.panneauListe();
     brancherEvenements();
     rendre();
+
+    // Fonctionnement hors connexion (seulement sur l'adresse en ligne, pas dans la démonstration).
+    if ('serviceWorker' in navigator && !window.DEMO_AUTO && /^(https:|http:\/\/localhost)/.test(location.href)) {
+      navigator.serviceWorker.register('service-worker.js').catch((e) => console.warn('Hors connexion indisponible', e));
+    }
   }
 
   return { demarrer, rendre, retour: () => retourHash };

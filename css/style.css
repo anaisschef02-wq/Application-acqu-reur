@@ -591,6 +591,12 @@ button.btn-contact { font: inherit; font-weight: 650; font-size: .92rem; cursor:
 .choix-restauration { display: grid; gap: 6px; }
 .choix-restauration small { color: var(--discret); margin-bottom: 8px; }
 
+/* ---------- Installation ---------- */
+.bloc-installation { display: grid; gap: 10px; border-color: var(--accent); }
+.bloc-installation h3 { margin: 0; }
+.bloc-installation .btn { justify-self: start; }
+.etapes { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+
 /* ---------- Messages ---------- */
 .toast {
   position: fixed; z-index: 70; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px));

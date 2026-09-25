@@ -16,7 +16,7 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 6. ✅ Rappels via l'agenda (Outlook, Google, .ics) + récap du jour par e-mail
 7. ✅ Sauvegarde / restauration des données
 8. Exports Excel / PDF et statistiques
-9. Application installable (hors connexion) et mise en ligne
+9. Application installable (hors connexion) ✅ — mise en ligne : en attente
 
 ## Organisation des fichiers
 
@@ -34,4 +34,6 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 - `js/sauvegarde.js` : la sauvegarde et la restauration des données
 - `js/reglages.js` : la page Réglages
 - `js/app.js` : la navigation entre les écrans
+- `manifest.webmanifest`, `icones/` : ce qui rend l'application installable
+- `service-worker.js` : le fonctionnement hors connexion (à chaque mise à jour, changer `VERSION` dans ce fichier)
 - `outils/construire-demo.mjs` : fabrique une version de démonstration en un seul fichier
