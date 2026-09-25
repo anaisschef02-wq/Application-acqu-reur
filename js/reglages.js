@@ -23,6 +23,8 @@ const Reglages = (() => {
           </div>
         </section>
 
+        ${Messages.vueReglages()}
+
         <section class="bloc">
           <h3>Acquéreurs fictifs</h3>
           <p class="discret">Pour découvrir l'application sans toucher à vos vrais clients. Ils sont marqués « Exemple » dans la liste.</p>

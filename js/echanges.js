@@ -71,10 +71,10 @@ const Echanges = (() => {
   }
 
   // options : { id, type, idEchange, rapide }
-  function ouvrir({ id = '', type = 'note', idEchange = null, rapide = false, focus = true } = {}) {
+  function ouvrir({ id = '', type = 'note', idEchange = null, rapide = false, focus = true, texte = '' } = {}) {
     const a = id ? Acq.trouver(id) : null;
     const existant = a && idEchange ? (a.echanges || []).find((e) => e.id === idEchange) : null;
-    const e = existant || { type, date: dateLocale(), texte: '', bien: '', avis: '' };
+    const e = existant || { type, date: dateLocale(), texte, bien: '', avis: '' };
     const titre = existant ? 'Modifier l\'échange' : rapide ? 'Note rapide' : `Nouvel échange · ${Acq.nomAffiche(a)}`;
 
     const el = document.getElementById('feuille');

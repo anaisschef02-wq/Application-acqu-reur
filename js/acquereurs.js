@@ -472,7 +472,7 @@ const Acq = (() => {
   }
 
   return {
-    charger, liste, trouver, enregistrer, supprimer, changerStatut, nomAffiche, resumeRecherche,
+    charger, liste, trouver, enregistrer, supprimer, changerStatut, nomAffiche, resumeRecherche, budget,
     communes, communesSupplementaires, ajouterCommune, retirerCommune,
     panneauListe, rendreListe, filtre,
     fiche, formulaire, majConditions, soumettre, ajouterCommuneDepuisFormulaire,

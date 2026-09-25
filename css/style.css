@@ -482,6 +482,22 @@ body.vue-racine .fab { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .relance-mini[data-etat="retard"] { color: var(--danger); }
 .relance-mini[data-etat="aujourdhui"] { color: var(--accent); }
 
+/* ---------- Modèles de messages ---------- */
+button.btn-contact { font: inherit; font-weight: 650; font-size: .92rem; cursor: pointer; }
+#message-texte { min-height: 220px; }
+.message-alerte { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--exemple-doux); color: var(--exemple); font-weight: 600; font-size: .92rem; }
+.bloc-modeles { display: grid; gap: 12px; }
+.bloc-modeles h3 { margin: 0; }
+.aide-variables summary, .modele summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; gap: 8px; }
+.aide-variables summary { color: var(--accent); font-size: .92rem; }
+.aide-variables dl { margin: 0; display: grid; gap: 6px; font-size: .9rem; }
+.aide-variables dl div { display: grid; grid-template-columns: 110px 1fr; gap: 8px; }
+.aide-variables dt { font-weight: 700; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .85rem; }
+.aide-variables dd { margin: 0; color: var(--discret); }
+.modele { border-top: 1px solid var(--bord); padding-top: 4px; }
+.modele-corps { display: grid; gap: 12px; padding: 4px 0 12px; }
+.modele-corps .lien { justify-self: start; padding: 0; }
+
 /* ---------- Messages ---------- */
 .toast {
   position: fixed; z-index: 70; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px));

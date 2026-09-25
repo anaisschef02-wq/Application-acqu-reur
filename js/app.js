@@ -75,6 +75,14 @@ const App = (() => {
       case 'note-rapide':
         Echanges.ouvrir({ rapide: true, id: route.id || '' });
         break;
+      case 'message':
+        Messages.ouvrir({ id: el.dataset.id, canal: el.dataset.canal });
+        break;
+      case 'retablir-modele':
+        await Messages.retablir(el.dataset.modele);
+        UI.toast('Texte d\'origine rétabli');
+        rendre();
+        break;
       case 'nouvel-echange':
         Echanges.ouvrir({ id: el.dataset.id, type: el.dataset.type });
         break;
@@ -217,6 +225,7 @@ const App = (() => {
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { /* sans importance */ }
 
     await Acq.charger();
+    await Messages.charger();
 
     if (!(await DB.estPersistant())) {
       const b = document.getElementById('bandeau');

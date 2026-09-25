@@ -80,14 +80,16 @@ const Relances = (() => {
     const tel = a.personnes.map((p) => p.telephone).find(Boolean);
     const mail = a.personnes.map((p) => p.email).find(Boolean);
     const num = tel ? tel.replace(/[^\d+]/g, '') : '';
-    const bouton = (ok, href, type, label) => (ok
-      ? `<a class="btn-contact" href="${esc(href)}" data-contact="${type}" data-id="${a.id}">${UI.icone(type, 20)}<span>${label}</span></a>`
-      : `<span class="btn-contact inactif" aria-disabled="true" title="Non renseigné">${UI.icone(type, 20)}<span>${label}</span></span>`);
+    const inactif = (type, label) => `<span class="btn-contact inactif" aria-disabled="true" title="Non renseigné">${UI.icone(type, 20)}<span>${label}</span></span>`;
+    // SMS et E-mail ouvrent d'abord le choix du modèle de message.
+    const message = (ok, canal, label) => (ok
+      ? `<button type="button" class="btn-contact" data-action="message" data-canal="${canal}" data-id="${a.id}">${UI.icone(canal, 20)}<span>${label}</span></button>`
+      : inactif(canal, label));
     return `
       <div class="contacts">
-        ${bouton(tel, `tel:${num}`, 'appel', 'Appeler')}
-        ${bouton(tel, `sms:${num}`, 'sms', 'SMS')}
-        ${bouton(mail, `mailto:${mail}`, 'email', 'E-mail')}
+        ${tel ? `<a class="btn-contact" href="tel:${esc(num)}" data-contact="appel" data-id="${a.id}">${UI.icone('appel', 20)}<span>Appeler</span></a>` : inactif('appel', 'Appeler')}
+        ${message(tel, 'sms', 'SMS')}
+        ${message(mail, 'email', 'E-mail')}
       </div>`;
   }
 
