@@ -48,6 +48,21 @@ const DEMARCHES = [
   { id: 'comptant', label: 'Achat comptant' },
 ];
 
+const TYPES_ECHANGE = [
+  { id: 'appel', label: 'Appel' },
+  { id: 'sms', label: 'SMS' },
+  { id: 'email', label: 'E-mail' },
+  { id: 'visite', label: 'Visite' },
+  { id: 'rdv', label: 'Rendez-vous' },
+  { id: 'note', label: 'Note' },
+];
+
+const AVIS_VISITE = [
+  { id: 'aime', label: 'A aimé' },
+  { id: 'mitige', label: 'Mitigé' },
+  { id: 'pasaime', label: 'N\'a pas aimé' },
+];
+
 const COMMUNES_SECTEUR = [
   'Waldighofen', 'Illtal', 'Ruederbach', 'Hirtzbach',
   'Aspach', 'Roppentzwiller', 'Durmenach', 'Bettendorf',
@@ -58,11 +73,20 @@ const libelle = (liste, id) => (liste.find((x) => x.id === id) || {}).label || '
 // Acquéreurs fictifs pour la démonstration (marqués « demo »).
 function acquereursExemples() {
   const ilYa = (jours) => new Date(Date.now() - jours * 86400000).toISOString();
+  // Date « locale » d'un échange (format des champs date + heure).
+  const le = (jours, heure) => {
+    const d = new Date(Date.now() - jours * 86400000);
+    const [h, m] = heure.split(':');
+    d.setHours(+h, +m, 0, 0);
+    return dateLocale(d);
+  };
+  const ech = (jours, heure, type, texte, visite = {}) => ({ id: nouvelId(), date: le(jours, heure), type, texte, bien: visite.bien || '', avis: visite.avis || '' });
   const base = (o) => ({
     id: nouvelId(),
     demo: true,
     adresse: '',
     raisonAbandon: '',
+    echanges: [],
     modifieLe: o.creeLe,
     ...o,
   });
@@ -80,6 +104,10 @@ function acquereursExemples() {
         options: ['garage', 'jardin'], travaux: 'rafraichissement', communes: ['Waldighofen', 'Illtal'],
         delai: '6mois', important: 'Deux enfants en bas âge : proche de l\'école, jardin clos. Lui travaille à Bâle.',
       },
+      echanges: [
+        ech(3, '10:15', 'appel', 'Premier appel suite à l\'annonce de la maison de Waldighofen. Très motivés, accord bancaire déjà obtenu.'),
+        ech(2, '18:40', 'email', 'Envoi de 3 biens correspondant à leur recherche.'),
+      ],
       financement: { demarche: 'accord', banque: 'Crédit Mutuel Waldighofen', accordMontant: 260000, accordDate: '2026-09-10', apport: 30000, bienAVendre: 'non', venteEtat: '' },
     }),
     base({
@@ -91,6 +119,12 @@ function acquereursExemples() {
         options: ['plainpied', 'garage'], travaux: 'aucun', communes: ['Durmenach', 'Roppentzwiller', 'Bettendorf'],
         delai: 'urgent', important: 'Retraité, veut absolument du plain-pied. Pas d\'escalier.',
       },
+      echanges: [
+        ech(20, '09:30', 'rdv', 'Rendez-vous à l\'agence pour faire le point sur son projet.'),
+        ech(12, '14:00', 'visite', 'Maison lumineuse mais trop d\'escaliers pour lui.', { bien: 'Maison de ville, Durmenach', avis: 'pasaime' }),
+        ech(5, '11:00', 'visite', 'Plain-pied comme il le souhaite. Il veut revenir avec sa fille samedi.', { bien: 'Plain-pied 4 pièces, Roppentzwiller', avis: 'aime' }),
+        ech(4, '17:20', 'sms', 'Contre-visite confirmée samedi 10 h.'),
+      ],
       financement: { demarche: 'comptant', banque: '', accordMontant: null, accordDate: '', apport: 200000, bienAVendre: 'oui', venteEtat: 'Appartement à Mulhouse sous compromis, signature prévue fin octobre.' },
     }),
     base({
@@ -102,6 +136,11 @@ function acquereursExemples() {
         options: ['balcon', 'garage'], travaux: 'aucun', communes: ['Waldighofen'],
         delai: '6mois', important: 'Premier achat. Veut un balcon et une place de parking.',
       },
+      echanges: [
+        ech(44, '12:10', 'appel', 'Premier contact. Cherche un premier appartement.'),
+        ech(30, '16:45', 'visite', 'Bien placé mais le balcon est trop petit.', { bien: 'Appartement T3, Waldighofen centre', avis: 'mitige' }),
+        ech(16, '09:05', 'note', 'Rendez-vous chez le courtier prévu début octobre.'),
+      ],
       financement: { demarche: 'courtier', banque: 'Courtier Sundgau Finance', accordMontant: null, accordDate: '', apport: 15000, bienAVendre: 'non', venteEtat: '' },
     }),
     base({
@@ -116,6 +155,11 @@ function acquereursExemples() {
         options: ['jardin', 'dependance'], travaux: 'gros', communes: ['Hirtzbach', 'Aspach', 'Illtal'],
         delai: 'paspresse', important: 'Aiment l\'ancien. Dépendance pour l\'atelier de Karim.',
       },
+      echanges: [
+        ech(58, '10:00', 'visite', 'Coup de cœur pour la grange.', { bien: 'Corps de ferme avec grange, Hirtzbach', avis: 'aime' }),
+        ech(9, '15:30', 'rdv', 'Offre rédigée à 305 000 €, transmise au vendeur.'),
+        ech(6, '11:45', 'appel', 'Le vendeur réfléchit, réponse attendue cette semaine.'),
+      ],
       financement: { demarche: 'accord', banque: 'Banque Populaire', accordMontant: 320000, accordDate: '2026-08-02', apport: 50000, bienAVendre: 'non', venteEtat: '' },
     }),
     base({
@@ -127,6 +171,9 @@ function acquereursExemples() {
         options: [], travaux: '', communes: ['Ruederbach', 'Waldighofen'],
         delai: 'paspresse', important: 'Projet de construction. Reprend contact après sa mutation.',
       },
+      echanges: [
+        ech(85, '08:50', 'appel', 'Met sa recherche en pause en attendant sa mutation. Rappeler en janvier.'),
+      ],
       financement: { demarche: 'rien', banque: '', accordMontant: null, accordDate: '', apport: null, bienAVendre: 'non', venteEtat: '' },
     }),
     base({
@@ -138,9 +185,20 @@ function acquereursExemples() {
         options: ['garage'], travaux: 'rafraichissement', communes: ['Waldighofen', 'Durmenach'],
         delai: '6mois', important: 'Investisseur, cherche un rendement d\'au moins 6 %.',
       },
+      echanges: [
+        ech(130, '10:30', 'visite', 'Rendement intéressant, 4 logements loués.', { bien: 'Immeuble 4 lots, Waldighofen', avis: 'aime' }),
+        ech(100, '14:00', 'rdv', 'Signature du compromis.'),
+        ech(10, '10:00', 'rdv', 'Signature de l\'acte chez le notaire.'),
+      ],
       financement: { demarche: 'accord', banque: 'Caisse d\'Épargne', accordMontant: 400000, accordDate: '2026-05-15', apport: 80000, bienAVendre: 'non', venteEtat: '' },
     }),
   ];
+}
+
+// Date + heure locales au format des champs « datetime-local » (2026-09-25T14:30).
+function dateLocale(d = new Date()) {
+  const z = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`;
 }
 
 function nouvelId() {

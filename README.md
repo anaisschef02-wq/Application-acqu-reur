@@ -9,7 +9,7 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 ## Avancement
 
 1. ✅ Fiche acquéreur : création, modification, liste, recherche par nom, stockage local
-2. Historique des échanges + dictée vocale + note rapide
+2. ✅ Historique des échanges + dictée vocale + note rapide
 3. Relances et écran « Ma journée »
 4. Modèles de messages
 5. Biens et rapprochement automatique
@@ -25,6 +25,8 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 - `js/db.js` : l'enregistrement des données sur l'appareil
 - `js/donnees.js` : les listes de choix (statuts, types de bien, communes…) et les acquéreurs fictifs
 - `js/acquereurs.js` : la liste, la fiche et le formulaire
+- `js/echanges.js` : l'historique des échanges et la note rapide
+- `js/dictee.js` : la dictée vocale
 - `js/reglages.js` : la page Réglages
 - `js/app.js` : la navigation entre les écrans
 - `outils/construire-demo.mjs` : fabrique une version de démonstration en un seul fichier

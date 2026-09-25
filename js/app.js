@@ -18,6 +18,8 @@ const App = (() => {
   };
 
   function rendre() {
+    Dictee.arreter();
+    const ancien = route.ecran;
     route = lireRoute();
     const detail = panneauDetail();
     let a = null;
@@ -44,12 +46,25 @@ const App = (() => {
         detail.innerHTML = `<div class="accueil-bureau"><p>Choisissez un acquéreur dans la liste, ou créez une nouvelle fiche.</p></div>`;
     }
     Acq.rendreListe(route.id);
-    if (route.ecran !== 'liste') window.scrollTo(0, 0);
+    if (route.ecran !== 'liste' && route.ecran !== ancien) window.scrollTo(0, 0);
   }
 
   async function action(nom, el) {
     const form = el.closest('form');
     switch (nom) {
+      case 'note-rapide':
+        Echanges.ouvrir({ rapide: true, id: route.id || '' });
+        break;
+      case 'nouvel-echange':
+        Echanges.ouvrir({ id: el.dataset.id, type: el.dataset.type });
+        break;
+      case 'modifier-echange':
+        Echanges.ouvrir({ id: el.dataset.id, idEchange: el.dataset.echange });
+        break;
+      case 'deplier-historique':
+        Echanges.basculerDepli(el.dataset.id);
+        rendre();
+        break;
       case 'ajouter-p2':
         form.querySelector('#bloc-p2').hidden = false;
         form.querySelector('#avec-p2').value = '1';
@@ -100,7 +115,7 @@ const App = (() => {
   }
 
   function brancherEvenements() {
-    window.addEventListener('hashchange', rendre);
+    window.addEventListener('hashchange', () => { Echanges.fermer(); rendre(); });
 
     document.addEventListener('click', (e) => {
       const f = e.target.closest('[data-filtre]');
@@ -167,12 +182,16 @@ const App = (() => {
     }
 
     // Version de démonstration : on la remplit d'exemples au premier lancement.
-    if (window.DEMO_AUTO && !Acq.liste().length) {
+    // Quand les exemples évoluent (nouvelle étape), on remplace les anciens exemples.
+    const VERSION_DEMO = 2;
+    if (window.DEMO_AUTO) {
       const deja = await DB.lire('reglages', 'demoInit');
-      if (!deja) {
+      const version = deja ? (deja.valeur === true ? 1 : deja.valeur) : 0;
+      if (version < VERSION_DEMO && (!Acq.liste().length || Acq.liste().some((a) => a.demo))) {
+        await Acq.supprimerExemples();
         await Acq.chargerExemples();
-        await DB.ecrire('reglages', { cle: 'demoInit', valeur: true });
       }
+      await DB.ecrire('reglages', { cle: 'demoInit', valeur: VERSION_DEMO });
     }
 
     panneauListe().innerHTML = Acq.panneauListe();
@@ -180,7 +199,7 @@ const App = (() => {
     rendre();
   }
 
-  return { demarrer };
+  return { demarrer, rendre };
 })();
 
 App.demarrer();

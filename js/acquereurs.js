@@ -62,6 +62,7 @@ const Acq = (() => {
       modifieLe: maintenant,
       statut: 'nouveau',
       raisonAbandon: '',
+      echanges: [],
       personnes: [{ prenom: '', nom: '', telephone: '', email: '' }],
       adresse: '',
       recherche: { types: [], budgetMin: null, budgetMax: null, surfaceMin: null, chambresMin: null, terrainMin: null, options: [], travaux: '', communes: [], delai: '', important: '' },
@@ -104,6 +105,9 @@ const Acq = (() => {
   function panneauListe() {
     return `
       <div class="liste-tete">
+        <button type="button" class="btn btn-note-rapide" data-action="note-rapide">
+          ${UI.icone('micro', 22)}Note rapide
+        </button>
         <label class="recherche">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           <input id="recherche-nom" type="search" placeholder="Rechercher un nom, un téléphone…" value="${esc(filtre.texte)}" autocomplete="off" aria-label="Rechercher un acquéreur">
@@ -220,6 +224,8 @@ const Acq = (() => {
           ${a.statut === 'abandonne' && a.raisonAbandon ? `<p class="raison">Raison de l'abandon : ${esc(a.raisonAbandon)}</p>` : ''}
         </header>
 
+        ${Echanges.blocFiche(a)}
+
         <section class="bloc">
           <h3>Coordonnées</h3>
           ${personnes.length ? personnes.map((p) => `
@@ -329,7 +335,7 @@ const Acq = (() => {
             </div>
           </fieldset>
           ${UI.pastilles('delai', DELAIS, r.delai, { unique: true, legende: 'Délai souhaité' })}
-          ${UI.champ('Ce qui compte vraiment pour eux', `<textarea id="important" name="important" rows="4">${esc(r.important)}</textarea>`)}
+          ${Dictee.champ('Ce qui compte vraiment pour eux', 'important', r.important)}
         </fieldset>
 
         <fieldset class="bloc">
@@ -460,7 +466,7 @@ const Acq = (() => {
   }
 
   return {
-    charger, liste, trouver, supprimer, changerStatut, nomAffiche,
+    charger, liste, trouver, enregistrer, supprimer, changerStatut, nomAffiche,
     communes, communesSupplementaires, ajouterCommune, retirerCommune,
     panneauListe, rendreListe, filtre,
     fiche, formulaire, majConditions, soumettre, ajouterCommuneDepuisFormulaire,
