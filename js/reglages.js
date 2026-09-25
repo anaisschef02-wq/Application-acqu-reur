@@ -10,6 +10,8 @@ const Reglages = (() => {
         <a class="btn-retour" href="${App.retour()}">‹ Retour</a>
         <h2>Réglages</h2>
 
+        ${Sauvegarde.vueReglages()}
+
         <section class="bloc">
           <h3>Communes proposées</h3>
           <p class="discret">Les communes du secteur sont toujours proposées. Ajoutez-en d'autres ici ou directement depuis une fiche.</p>

@@ -78,6 +78,12 @@ const DB = (() => {
         else memoire[magasin].delete(id);
       });
     },
+    async vider(magasin) {
+      await transaction(magasin, 'readwrite', (s) => {
+        if (s) s.clear();
+        else memoire[magasin].clear();
+      });
+    },
     async estPersistant() {
       await ouvrir();
       return !memoire;

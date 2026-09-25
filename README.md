@@ -14,7 +14,7 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 4. ✅ Modèles de messages
 5. ✅ Biens et rapprochement automatique
 6. ✅ Rappels via l'agenda (Outlook, Google, .ics) + récap du jour par e-mail
-7. Sauvegarde / restauration des données
+7. ✅ Sauvegarde / restauration des données
 8. Exports Excel / PDF et statistiques
 9. Application installable (hors connexion) et mise en ligne
 
@@ -31,6 +31,7 @@ Application de suivi des acquéreurs pour Anaïs Scheffel (Maya Immo, Waldighofe
 - `js/messages.js` : les modèles de messages (SMS / e-mail)
 - `js/biens.js` : les biens et le rapprochement avec les acquéreurs
 - `js/agenda.js` : les rappels dans l'agenda et le récap du jour
+- `js/sauvegarde.js` : la sauvegarde et la restauration des données
 - `js/reglages.js` : la page Réglages
 - `js/app.js` : la navigation entre les écrans
 - `outils/construire-demo.mjs` : fabrique une version de démonstration en un seul fichier

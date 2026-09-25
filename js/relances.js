@@ -164,6 +164,7 @@ const Relances = (() => {
           <h2>Ma journée</h2>
           <p class="discret">${esc(date.charAt(0).toUpperCase() + date.slice(1))}</p>
         </header>
+        ${Sauvegarde.rappel()}
         <button type="button" class="btn btn-note-rapide" data-action="note-rapide">${UI.icone('micro', 22)}Note rapide</button>
         ${message}
         ${section('retard', 'En retard', retard)}

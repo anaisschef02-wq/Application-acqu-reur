@@ -578,6 +578,19 @@ button.btn-contact { font: inherit; font-weight: 650; font-size: .92rem; cursor:
 .outils-journee h3 { margin: 0; }
 .outils-journee .btn { flex: 1 1 240px; }
 
+/* ---------- Sauvegarde ---------- */
+.bloc-sauvegarde { display: grid; gap: 10px; }
+.bloc-sauvegarde h3 { margin: 0; }
+.alerte-sauvegarde { margin: 0; font-weight: 650; color: var(--exemple); }
+.rappel-sauvegarde {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px;
+  padding: 12px 14px; border-radius: var(--rayon); background: var(--exemple-doux); color: var(--exemple); font-size: .92rem; font-weight: 600;
+}
+.rappel-sauvegarde span { flex: 1 1 220px; }
+.rappel-sauvegarde .btn { min-height: 42px; border-color: currentColor; color: inherit; }
+.choix-restauration { display: grid; gap: 6px; }
+.choix-restauration small { color: var(--discret); margin-bottom: 8px; }
+
 /* ---------- Messages ---------- */
 .toast {
   position: fixed; z-index: 70; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px));

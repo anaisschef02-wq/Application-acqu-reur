@@ -148,6 +148,14 @@ const App = (() => {
         await Biens.chargerExemples();
         rendre();
         break;
+      case 'sauvegarder':
+        await Sauvegarde.telecharger();
+        rendre();
+        break;
+      case 'partager-sauvegarde':
+        await Sauvegarde.partager();
+        rendre();
+        break;
       case 'agenda-ics':
         Agenda.icsAcquereur(el.dataset.id);
         break;
@@ -270,6 +278,14 @@ const App = (() => {
         UI.toast('Marge enregistrée');
       }
       if (e.target.id === 'bien-photo') Biens.choisirPhoto(e.target);
+      if (e.target.id === 'fichier-restauration' && (await Sauvegarde.restaurer(e.target))) {
+        await Acq.charger();
+        await Biens.charger();
+        await Messages.charger();
+        await Agenda.charger();
+        document.getElementById('panneau-liste').innerHTML = Acq.panneauListe();
+        rendre();
+      }
       if (e.target.id === 'statut-rapide') {
         const ok = await Acq.changerStatut(e.target.dataset.id, e.target.value);
         rendre();
@@ -310,6 +326,7 @@ const App = (() => {
     await Messages.charger();
     await Biens.charger();
     await Agenda.charger();
+    await Sauvegarde.charger();
 
     if (!(await DB.estPersistant())) {
       const b = document.getElementById('bandeau');
