@@ -570,6 +570,14 @@ button.btn-contact { font: inherit; font-weight: 650; font-size: .92rem; cursor:
 .criteres-corps { display: grid; gap: 12px; padding-bottom: 14px; }
 .criteres-corps .lien { justify-self: start; padding: 0; }
 
+/* ---------- Agenda et récap ---------- */
+.agenda-fiche { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--bord); }
+.agenda-boutons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.agenda-boutons .lien { padding: 4px 0; font-size: .9rem; }
+.outils-journee { display: grid; gap: 12px; }
+.outils-journee h3 { margin: 0; }
+.outils-journee .btn { flex: 1 1 240px; }
+
 /* ---------- Messages ---------- */
 .toast {
   position: fixed; z-index: 70; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px));

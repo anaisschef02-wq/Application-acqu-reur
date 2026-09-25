@@ -96,8 +96,7 @@ const Relances = (() => {
   // ---------- Écran « Ma journée » ----------
 
   function ligne({ a, p }) {
-    const d = dernierEchange(a);
-    const dernier = d ? `Dernier échange : ${libelle(TYPES_ECHANGE, d.type)}, ${ilYa(lireJour(d.date))}` : 'Aucun échange pour l\'instant';
+    const dernier = texteDernier(a);
     return `
       <li class="relance">
         <a class="relance-infos" href="#/a/${a.id}">
@@ -121,15 +120,27 @@ const Relances = (() => {
       </section>`;
   }
 
-  function vueJournee() {
+  // Relances en retard, du jour et des 7 prochains jours.
+  function groupes() {
     const aVenir = Acq.liste()
       .map((a) => ({ a, p: prochaine(a) }))
       .filter((x) => x.p)
       .map((x) => ({ ...x, e: ecart(x.p.date) }))
       .sort((x, y) => x.e - y.e || Acq.nomAffiche(x.a).localeCompare(Acq.nomAffiche(y.a), 'fr'));
-    const retard = aVenir.filter((x) => x.e < 0);
-    const auj = aVenir.filter((x) => x.e === 0);
-    const semaine = aVenir.filter((x) => x.e >= 1 && x.e <= 7);
+    return {
+      retard: aVenir.filter((x) => x.e < 0),
+      auj: aVenir.filter((x) => x.e === 0),
+      semaine: aVenir.filter((x) => x.e >= 1 && x.e <= 7),
+    };
+  }
+
+  function texteDernier(a) {
+    const d = dernierEchange(a);
+    return d ? `Dernier échange : ${libelle(TYPES_ECHANGE, d.type)}, ${ilYa(lireJour(d.date))}` : 'Aucun échange pour l\'instant';
+  }
+
+  function vueJournee() {
+    const { retard, auj, semaine } = groupes();
     const date = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 
     let message = '';
@@ -158,6 +169,7 @@ const Relances = (() => {
         ${section('retard', 'En retard', retard)}
         ${section('aujourdhui', 'Aujourd\'hui', auj)}
         ${section('semaine', 'Cette semaine', semaine)}
+        ${Acq.liste().length ? Agenda.actionsJournee(retard.length + auj.length + semaine.length) : ''}
       </div>`;
   }
 
@@ -195,6 +207,7 @@ const Relances = (() => {
           ${UI.champ('Rythme des relances', `<select id="relance-frequence" class="champ-select" data-id="${a.id}">${FREQUENCES.map((n) => `<option value="${n}" ${n === frequence(a) ? 'selected' : ''}>Tous les ${n} jours${n === FREQUENCE_DEFAUT ? ' (normal)' : ''}</option>`).join('')}</select>`)}
         </div>
         ${a.relanceFixee ? `<button type="button" class="lien" data-action="effacer-relance" data-id="${a.id}">Annuler la date fixée</button>` : ''}
+        ${p ? Agenda.boutonsFiche(a, p) : ''}
       </section>`;
   }
 
@@ -234,7 +247,7 @@ const Relances = (() => {
   }
 
   return {
-    prochaine, etat, aFaire, apresEchange, contacts, vueJournee, blocFiche, mentionListe,
+    prochaine, etat, aFaire, groupes, texteDernier, quand, frequence, dateLongue, apresEchange, contacts, vueJournee, blocFiche, mentionListe,
     fixer, fixerDans, changerFrequence, majBadge, isoJour, plus, aujourdhui,
   };
 })();

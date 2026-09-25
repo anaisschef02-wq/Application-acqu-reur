@@ -148,6 +148,12 @@ const App = (() => {
         await Biens.chargerExemples();
         rendre();
         break;
+      case 'agenda-ics':
+        Agenda.icsAcquereur(el.dataset.id);
+        break;
+      case 'agenda-semaine':
+        Agenda.icsSemaine();
+        break;
       case 'filtre-biens':
         Biens.filtrer(el.dataset.filtreBien);
         rendre();
@@ -303,6 +309,7 @@ const App = (() => {
     await Acq.charger();
     await Messages.charger();
     await Biens.charger();
+    await Agenda.charger();
 
     if (!(await DB.estPersistant())) {
       const b = document.getElementById('bandeau');

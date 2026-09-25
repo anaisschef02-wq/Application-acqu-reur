@@ -25,6 +25,8 @@ const Reglages = (() => {
 
         ${Messages.vueReglages()}
 
+        ${Agenda.vueReglages()}
+
         ${Biens.vueReglages()}
 
         <section class="bloc">
