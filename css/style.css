@@ -408,6 +408,80 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); backgr
 .visite-champs .chip span { background: var(--surface); }
 body.feuille-ouverte { overflow: hidden; }
 
+/* ---------- Onglets (téléphone) ---------- */
+.onglets {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
+  display: none; grid-template-columns: 1fr 1fr;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--surface); border-top: 1px solid var(--bord);
+}
+body.vue-racine .onglets { display: grid; }
+.onglets a {
+  position: relative; display: grid; justify-items: center; gap: 2px; min-height: 58px; padding: 8px 0 6px;
+  color: var(--discret); text-decoration: none; font-size: .8rem; font-weight: 600;
+}
+.onglets a.actif { color: var(--accent); }
+.compteur {
+  position: absolute; top: 4px; left: calc(50% + 8px);
+  display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px;
+  background: var(--danger); color: #fff; font-size: .72rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+body.vue-racine .fab { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 900px) {
+  .onglets { display: none !important; }
+  .journee .btn-note-rapide { display: none; }
+}
+
+/* ---------- Ma journée ---------- */
+.journee { display: grid; gap: 20px; max-width: 760px; }
+.journee-tete { display: grid; gap: 2px; }
+.journee-calme { margin: 0; padding: 18px; text-align: center; color: var(--discret); background: var(--surface); border: 1px dashed var(--bord); border-radius: var(--rayon); }
+.groupe-relances h3 { display: flex; align-items: center; gap: 8px; }
+.groupe-relances .compte { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--surface-2); color: var(--texte); font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.groupe-relances[data-etat="retard"] h3 { color: var(--danger); }
+.groupe-relances[data-etat="retard"] .compte { background: var(--danger-doux); color: var(--danger); }
+.relances { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.relance { background: var(--surface); border: 1px solid var(--bord); border-radius: var(--rayon); overflow: hidden; }
+.groupe-relances[data-etat="retard"] .relance { border-left: 3px solid var(--danger); }
+.relance-infos { display: grid; gap: 4px; padding: 14px 16px 10px; color: var(--texte); text-decoration: none; }
+.relance-infos:hover .ligne-nom { color: var(--accent); }
+.relance-quand { flex: none; font-size: .85rem; font-weight: 650; color: var(--discret); }
+.groupe-relances[data-etat="retard"] .relance-quand { color: var(--danger); }
+.groupe-relances[data-etat="aujourdhui"] .relance-quand { color: var(--accent); }
+.relance-dernier { font-size: .85rem; color: var(--discret); }
+.tag-fixe { display: inline-block; padding: 0 7px; border-radius: 6px; background: var(--accent-doux); color: var(--accent-fort); font-size: .78rem; font-weight: 650; }
+
+.contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.relance .contacts { padding: 0 12px 12px; }
+.btn-contact {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px;
+  border: 1px solid var(--bord); border-radius: 10px; background: var(--fond);
+  color: var(--accent); font-weight: 650; font-size: .92rem; text-decoration: none;
+}
+.btn-contact span { color: var(--texte); }
+.btn-contact:hover { border-color: var(--accent); background: var(--accent-doux); }
+.btn-contact.inactif { opacity: .4; cursor: not-allowed; }
+.fiche-tete .contacts { margin-top: 6px; }
+
+/* ---------- Relance sur la fiche ---------- */
+.bloc-relance { display: grid; gap: 12px; }
+.bloc-relance h3 { margin: 0; }
+.relance-etat { margin: 0; font-weight: 600; }
+.bloc-relance[data-etat="retard"] { border-color: var(--danger); }
+.bloc-relance[data-etat="retard"] .relance-etat { color: var(--danger); }
+.bloc-relance[data-etat="aujourdhui"] .relance-etat { color: var(--accent); }
+.relance-raccourcis { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.relance-raccourcis > span { font-size: .92rem; color: var(--discret); }
+.chip-bouton {
+  min-height: 40px; padding: 0 14px; border: 1px solid var(--bord); border-radius: 999px;
+  background: var(--fond); color: var(--texte); font: inherit; font-size: .92rem; cursor: pointer;
+}
+.chip-bouton:hover { border-color: var(--accent); background: var(--accent-doux); }
+.bloc-relance .lien { justify-self: start; padding: 0; }
+.relance-mini { font-size: .82rem; font-weight: 650; }
+.relance-mini[data-etat="retard"] { color: var(--danger); }
+.relance-mini[data-etat="aujourdhui"] { color: var(--accent); }
+
 /* ---------- Messages ---------- */
 .toast {
   position: fixed; z-index: 70; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px));

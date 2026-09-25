@@ -7,7 +7,7 @@ const Reglages = (() => {
     const autres = Acq.communesSupplementaires();
     return `
       <article class="fiche">
-        <a class="btn-retour" href="#/">‹ Liste</a>
+        <a class="btn-retour" href="${App.retour()}">‹ Retour</a>
         <h2>Réglages</h2>
 
         <section class="bloc">

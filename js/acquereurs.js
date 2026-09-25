@@ -63,6 +63,8 @@ const Acq = (() => {
       statut: 'nouveau',
       raisonAbandon: '',
       echanges: [],
+      relanceFixee: '',
+      frequenceRelance: null,
       personnes: [{ prenom: '', nom: '', telephone: '', email: '' }],
       adresse: '',
       recherche: { types: [], budgetMin: null, budgetMax: null, surfaceMin: null, chambresMin: null, terrainMin: null, options: [], travaux: '', communes: [], delai: '', important: '' },
@@ -167,6 +169,7 @@ const Acq = (() => {
             ${UI.badgeStatut(a.statut)}
           </span>
           <span class="ligne-resume">${esc(resumeRecherche(a))}</span>
+          ${Relances.mentionListe(a)}
           ${a.demo ? '<span class="tag-exemple">Exemple</span>' : ''}
         </a>
       </li>`).join('')}</ul>`;
@@ -204,7 +207,7 @@ const Acq = (() => {
 
     return `
       <article class="fiche">
-        <a class="btn-retour" href="#/">‹ Liste</a>
+        <a class="btn-retour" href="${App.retour()}">‹ Retour</a>
         <header class="fiche-tete">
           <div class="fiche-titre">
             <h2>${esc(nomAffiche(a))}</h2>
@@ -219,10 +222,13 @@ const Acq = (() => {
                 ${STATUTS.map((s) => `<option value="${s.id}" ${s.id === a.statut ? 'selected' : ''}>${esc(s.label)}</option>`).join('')}
               </select>
             </label>
-            <a class="btn" href="#/a/${a.id}/modifier">Modifier</a>
+            <a class="btn btn-secondaire" href="#/a/${a.id}/modifier">Modifier la fiche</a>
           </div>
+          ${Relances.contacts(a)}
           ${a.statut === 'abandonne' && a.raisonAbandon ? `<p class="raison">Raison de l'abandon : ${esc(a.raisonAbandon)}</p>` : ''}
         </header>
+
+        ${Relances.blocFiche(a)}
 
         ${Echanges.blocFiche(a)}
 
@@ -294,7 +300,7 @@ const Acq = (() => {
 
     return `
       <form id="form-acq" class="formulaire" data-id="${a.id}" data-nouveau="${nouveau}" novalidate>
-        <a class="btn-retour" href="${nouveau ? '#/' : `#/a/${a.id}`}">‹ Annuler</a>
+        <a class="btn-retour" href="${nouveau ? App.retour() : `#/a/${a.id}`}">‹ Annuler</a>
         <h2>${nouveau ? 'Nouvel acquéreur' : 'Modifier la fiche'}</h2>
 
         <fieldset class="bloc">
@@ -364,7 +370,7 @@ const Acq = (() => {
         </fieldset>
 
         <div class="barre-actions">
-          <a class="btn btn-secondaire" href="${nouveau ? '#/' : `#/a/${a.id}`}">Annuler</a>
+          <a class="btn btn-secondaire" href="${nouveau ? App.retour() : `#/a/${a.id}`}">Annuler</a>
           <button type="submit" class="btn">Enregistrer</button>
         </div>
       </form>`;
@@ -466,7 +472,7 @@ const Acq = (() => {
   }
 
   return {
-    charger, liste, trouver, enregistrer, supprimer, changerStatut, nomAffiche,
+    charger, liste, trouver, enregistrer, supprimer, changerStatut, nomAffiche, resumeRecherche,
     communes, communesSupplementaires, ajouterCommune, retirerCommune,
     panneauListe, rendreListe, filtre,
     fiche, formulaire, majConditions, soumettre, ajouterCommuneDepuisFormulaire,

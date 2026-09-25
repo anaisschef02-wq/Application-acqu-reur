@@ -94,6 +94,7 @@ function acquereursExemples() {
     base({
       creeLe: ilYa(3),
       statut: 'nouveau',
+      relanceFixee: dateLocale().slice(0, 10),
       personnes: [
         { prenom: 'Julie', nom: 'Exemple-Meyer', telephone: '06 00 00 00 01', email: 'julie.exemple@example.com' },
         { prenom: 'Thomas', nom: 'Exemple-Meyer', telephone: '06 00 00 00 02', email: '' },
@@ -146,6 +147,7 @@ function acquereursExemples() {
     base({
       creeLe: ilYa(60),
       statut: 'offre',
+      frequenceRelance: 7,
       personnes: [
         { prenom: 'Karim', nom: 'Exemple-Haas', telephone: '06 00 00 00 05', email: 'karim.exemple@example.com' },
         { prenom: 'Léa', nom: 'Exemple-Fuchs', telephone: '06 00 00 00 06', email: 'lea.exemple@example.com' },

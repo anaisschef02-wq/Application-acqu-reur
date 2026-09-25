@@ -71,7 +71,7 @@ const Echanges = (() => {
   }
 
   // options : { id, type, idEchange, rapide }
-  function ouvrir({ id = '', type = 'note', idEchange = null, rapide = false } = {}) {
+  function ouvrir({ id = '', type = 'note', idEchange = null, rapide = false, focus = true } = {}) {
     const a = id ? Acq.trouver(id) : null;
     const existant = a && idEchange ? (a.echanges || []).find((e) => e.id === idEchange) : null;
     const e = existant || { type, date: dateLocale(), texte: '', bien: '', avis: '' };
@@ -106,7 +106,7 @@ const Echanges = (() => {
     document.body.classList.add('feuille-ouverte');
     const form = el.querySelector('form');
     Acq.majConditions(form);
-    if (!rapide && !existant) form.querySelector('#echange-texte').focus();
+    if (focus && !rapide && !existant) form.querySelector('#echange-texte').focus();
   }
 
   function fermer() {
@@ -137,6 +137,7 @@ const Echanges = (() => {
     };
     a.echanges = (a.echanges || []).filter((x) => x.id !== echange.id);
     a.echanges.push(echange);
+    Relances.apresEchange(a);
     await Acq.enregistrer(a);
     fermer();
     UI.toast(form.dataset.id ? 'Échange enregistré' : `Note ajoutée à la fiche de ${Acq.nomAffiche(a)}`);
